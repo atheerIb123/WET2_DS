@@ -5,7 +5,7 @@ template<class T>
 class node
 {
 public:
-    T key;
+    T* key;
     int nleft;
     node * left;
     node * right;
@@ -13,7 +13,7 @@ public:
     node(T k, node * p){
         parent = p;
         nleft = 0;
-        key = k;
+        key = new T(k);
         left = NULL;
         right = NULL;
     }
@@ -40,15 +40,15 @@ public:
     }
     node<T> * search(node<T>* root,T x)
     {
-        if(x == nullptr)
+        if(root == nullptr)
         {
             return nullptr;
         }
-        if(x == root->key)
+        if(x == *root->key)
             return root;
-        else if(x < root->key)
+        else if(x < *root->key)
             return search(root->right,x);
-        else if(x > root->key)
+        else if(x > *root->key)
             return search(root->left,x);
         return nullptr;
     }
@@ -83,16 +83,16 @@ private:
             n++;
             node<T> * temp = new node<T>(x,p);
             while(p!=NULL){
-                if(x<p->key) p->nleft += 1;
+                if(x<*p->key) p->nleft += 1;
                 p=p->parent;
             }
             if(n==1)
                 root_ = temp;
             return temp;
         }
-        if(*x > *head->key)
+        if(x > *head->key)
             head->right = insertUtil(head->right, x, head);
-        else if(*x < *head->key) head->left = insertUtil(head->left, x, head);
+        else if(x < *head->key) head->left = insertUtil(head->left, x, head);
         return head;
     }
     node<T> * searchUtil(node<T> * head, T x){
@@ -127,11 +127,11 @@ private:
     }
     node<T> * removeUtil(node<T> * head, T x, node<T> * p){
         if(head == NULL) return NULL;
-        if(x == head->key){
+        if(x == *head->key){
             node<T> * l = head->left;
             node<T>* r = head->right;
             while(p!=NULL){
-                if(x<p->key) p->nleft -= 1;
+                if(x< *p->key) p->nleft -= 1;
                 p=p->parent;
             }
             if(l == NULL){
@@ -144,10 +144,10 @@ private:
             }
             while(r->left != NULL) r = r->left;
             head->key = r->key;
-            head->right = removeUtil(head->right, r->key, NULL);
+            head->right = removeUtil(head->right, *r->key, NULL);
             return head;
         }
-        if(x < head->key) head->left = removeUtil(head->left, x, head);
+        if(x < *head->key) head->left = removeUtil(head->left, x, head);
         else head->right = removeUtil(head->right, x, head);
         return head;
     }
