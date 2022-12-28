@@ -5,12 +5,11 @@
 #include "TeamById.h"
 
 
-TeamById::TeamById(int teamId, int a)
+TeamById::TeamById(int teamId)
 {
-    this->teamId = teamId;
-    this->allPlayersAbility = a;
+    this->teamPoints = 0;
+    teamId_ = teamId;
     this->gamesPlayed = std::make_shared<int>(0);
-    this->teamSpirit;
 }
 void TeamById::increaseTeamAbility(int value)
 {
@@ -33,7 +32,7 @@ void TeamById::increaseGamesPlayed(int value)
 
 bool TeamById::operator<(const TeamById &other) const
 {
-    if(this->teamId < other.teamId)
+    if(this->teamId_ < other.teamId_)
     {
         return true;
     }
@@ -42,7 +41,7 @@ bool TeamById::operator<(const TeamById &other) const
 
 bool TeamById::operator>(const TeamById &other) const
 {
-    if(this ->teamId > other.teamId)
+    if(this ->teamId_ > other.teamId_)
     {
         return true;
     }
@@ -51,14 +50,14 @@ bool TeamById::operator>(const TeamById &other) const
 
 bool TeamById::operator==(const TeamById &other) const
 {
-    if(this->teamId == other.teamId)
+    if(this->teamId_ == other.teamId_)
         return true;
     return false;
 }
 
 int TeamById::getTeamId() const
 {
-    return this->teamId;
+    return this->teamId_;
 }
 
 int TeamById::getTeamPoints() const

@@ -11,7 +11,7 @@
 
 class TeamById {
 private:
-    int teamId;
+    int teamId_;
     int allPlayersAbility;
     int teamPoints;
     bool hasGK;
@@ -19,9 +19,9 @@ private:
     std::shared_ptr<int> gamesPlayed;
 public:
     TeamById() = default;
-    TeamById(int teamId, int a);
+    TeamById(int teamId_);
     TeamById(const TeamById& other) = default;
-    TeamById& operator=(const TeamById& other) = default;
+    TeamById& operator=(const TeamById& other) = delete;
     ~TeamById() = default;
     int getTeamId() const;
     bool isLegalTeam() const;

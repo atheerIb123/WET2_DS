@@ -10,6 +10,17 @@ Player::Player()
     this->ability = 0;
     this->spirit = permutation_t::invalid();
 }
+Player::Player(int id)
+{
+    this->playerId = id;
+    this->gamesPlayed = -1;
+    this->goalKeeper = false;
+    this->cards = nullptr;
+    this->teamId = nullptr;
+    this->ability = 0;
+    this->spirit = permutation_t::invalid();
+
+}
 
 Player::Player(int playerId, shared_ptr<int> teamId, const permutation_t& sp, int gamesPlayed, shared_ptr<int> cards, int ability, bool goalKeeper)
 {

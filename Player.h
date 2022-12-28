@@ -22,6 +22,7 @@ private:
 
 public:
     Player();
+    Player(int id);
     Player(int playerId, shared_ptr<int> teamId, const permutation_t& sp, int gamesPlayed, shared_ptr<int> cards, int ability, bool goalKeeper);
     Player(const Player& other) = default;
     Player& operator=(const Player& other) = default;

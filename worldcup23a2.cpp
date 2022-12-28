@@ -2,7 +2,10 @@
 
 world_cup_t::world_cup_t()
 {
-	// TODO: Your code goes here
+    this->teamsIdTree.n = 0;
+    this->teamsStatsTree.n = 0;
+
+    // TODO: Your code goes here
 }
 
 world_cup_t::~world_cup_t()
@@ -13,6 +16,30 @@ world_cup_t::~world_cup_t()
 StatusType world_cup_t::add_team(int teamId)
 {
 	// TODO: Your code goes here
+    if(teamId <= 0)
+    {
+        return StatusType::INVALID_INPUT;
+    }
+
+    TeamByStats tempSt(teamId);
+    TeamById tempId(teamId);
+    
+    auto r = this->teamsIdTree.getRoot();
+    if(this->teamsIdTree.getRoot() == nullptr)
+    {
+        this->teamsIdTree.insert(&tempId);
+        TeamByStats tempStats(teamId);
+        this->teamsStatsTree.insert(&tempStats);
+        return StatusType::SUCCESS;
+    }
+    if(this->teamsIdTree.search(teamsIdTree.getRoot(),&tempId) != nullptr)
+    {
+        return StatusType::FAILURE;
+    }
+    this->teamsIdTree.insert(&tempId);
+    TeamByStats tempStats(teamId);
+    this->teamsStatsTree.insert(&tempStats);
+    
 	return StatusType::SUCCESS;
 }
 
@@ -33,6 +60,9 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
 output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
 {
 	// TODO: Your code goes here
+    if (1 != 1)
+        return StatusType::SUCCESS;
+    TeamById t(1);
 	return StatusType::SUCCESS;
 }
 

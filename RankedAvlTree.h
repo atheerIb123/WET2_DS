@@ -1,25 +1,32 @@
 #include<iostream>
 using namespace std;
 
-template <typename T>
-class AVLRankTree{
+template<class T>
+class node
+{
 public:
-    class node{
-    public:
-        T key;
-        int nleft;
-        node * left;
-        node * right;
-        node * parent;
-        node(T k, node * p){
-            parent = p;
-            nleft = 0;
-            key = k;
-            left = NULL;
-            right = NULL;
-        }
-    };
-    node * root = NULL;
+    T key;
+    int nleft;
+    node * left;
+    node * right;
+    node * parent;
+    node(T k, node * p){
+        parent = p;
+        nleft = 0;
+        key = k;
+        left = NULL;
+        right = NULL;
+    }
+};
+
+
+template <class T>
+class AVLRankTree{
+private:
+    node<T>* root = NULL;
+    node<T>* root_ = NULL;
+
+public:
     int n;
     void insert(T x){
         root=insertUtil(root, x, NULL);
@@ -27,8 +34,23 @@ public:
     void remove(T x){
         root=removeUtil(root, x, NULL);
     }
-    node * search(T x){
-        return searchUtil(root,x);
+    node<T>* getRoot()
+    {
+        return this->root;
+    }
+    node<T> * search(node<T>* root,T x)
+    {
+        if(x == nullptr)
+        {
+            return nullptr;
+        }
+        if(x == root->key)
+            return root;
+        else if(x < root->key)
+            return search(root->right,x);
+        else if(x > root->key)
+            return search(root->left,x);
+        return nullptr;
     }
     void inorder(){
         inorderUtil(root);
@@ -40,7 +62,7 @@ public:
     int rank(T x){
         return rankUtil(root, x, 0);
     }
-    node* select(int k)
+    node<T>* select(int k)
     {
          k += 1;
         if(k > this->n)
@@ -50,41 +72,44 @@ public:
         return selectUtil(root,k);
     }
 private:
-    void inorderUtil(node * head){
+    void inorderUtil(node<T> * head){
         if(head==NULL) return ;
         inorderUtil(head->left);
         cout<<head->key<<" ";
         inorderUtil(head->right);
     }
-    node * insertUtil(node * head, T x, node * p){
+    node<T> * insertUtil(node<T> * head, T x, node<T> * p){
         if(head == NULL){
             n++;
-            node * temp = new node(x,p);
+            node<T> * temp = new node<T>(x,p);
             while(p!=NULL){
                 if(x<p->key) p->nleft += 1;
                 p=p->parent;
             }
+            if(n==1)
+                root_ = temp;
             return temp;
         }
-        if(x > head->key) head->right = insertUtil(head->right, x, head);
-        else if(x < head->key) head->left = insertUtil(head->left, x, head);
+        if(*x > *head->key)
+            head->right = insertUtil(head->right, x, head);
+        else if(*x < *head->key) head->left = insertUtil(head->left, x, head);
         return head;
     }
-    node * searchUtil(node * head, T x){
+    node<T> * searchUtil(node<T> * head, T x){
         if(head == NULL) return NULL;
         T k = head->key;
         if(k == x) return head;
         if(k > x) return searchUtil(head->left, x);
         if(k < x) return searchUtil(head->right, x);
     }
-    int rankUtil(node * head, T x, int r){
+    int rankUtil(node<T> * head, T x, int r){
         if(head == NULL) return 0;
         T k = head->key;
-        if(k == x) return r+1+head->nleft;
-        if(k > x) return rankUtil(head->left, x, r);
-        if(k < x) return rankUtil(head->right, x, r+head->nleft+1);
+        if(*k == *x) return r+1+head->nleft;
+        if(*k > *x) return rankUtil(head->left, x, r);
+        if(*k < *x) return rankUtil(head->right, x, r+head->nleft+1);
     }
-    node* selectUtil(node* head,int k)
+    node<T>* selectUtil(node<T>* head,int k)
     {
         if(head->nleft  == k-1)
         {
@@ -100,11 +125,11 @@ private:
         }
         return nullptr;
     }
-    node * removeUtil(node * head, T x, node * p){
+    node<T> * removeUtil(node<T> * head, T x, node<T> * p){
         if(head == NULL) return NULL;
         if(x == head->key){
-            node * l = head->left;
-            node * r = head->right;
+            node<T> * l = head->left;
+            node<T>* r = head->right;
             while(p!=NULL){
                 if(x<p->key) p->nleft -= 1;
                 p=p->parent;
@@ -127,7 +152,7 @@ private:
         return head;
     }
 
-    T ksmallestUtil(node * head, int k){
+    T& ksmallestUtil(node<T> * head, int k){
         if(k<1 || k>n) return NULL;
         if(head->nleft == k-1) return head->key;
         if(head->nleft > k-1) return ksmallestUtil(head->left, k);

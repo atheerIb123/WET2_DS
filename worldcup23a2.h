@@ -16,13 +16,18 @@
 #define WORLDCUP23A2_H_
 
 #include "wet2util.h"
+#include "RankedAvlTree.h"
+#include "TeamByStats.h"
+#include "TeamById.h"
 
 class world_cup_t {
 private:
-	//
-	// Here you may add anything you want
-	//
-	
+	AVLRankTree<TeamById*> teamsIdTree;
+    AVLRankTree<TeamByStats*> teamsStatsTree;
+
+
+
+
 public:
 	// <DO-NOT-MODIFY> {
 	
