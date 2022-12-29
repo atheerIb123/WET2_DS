@@ -107,10 +107,10 @@ private:
     }
     int rankUtil(node<T>* head, T x, int r) {
         if (head == NULL) return 0;
-        T k = head->key;
-        if (*k == *x) return r + 1 + head->nleft;
-        if (*k > *x) return rankUtil(head->left, x, r);
-        if (*k < *x) return rankUtil(head->right, x, r + head->nleft + 1);
+        T k = *head->key;
+        if (k == x) return r + 1 + head->nleft;
+        if (k > x) return rankUtil(head->left, x, r);
+        if (k < x) return rankUtil(head->right, x, r + head->nleft + 1);
     }
     node<T>* selectUtil(node<T>* head, int k)
     {
@@ -167,8 +167,8 @@ private:
     node<T>* leftRotate(node<T>* parent) {
         node<T>* toRotate = parent->right;
         node<T>* leftSon = toRotate->left;
-        /*parent->nleft = parent->left->right->nleft + parent->right->nleft + 1;
-        parent->left->nleft = parent->left->left->nleft + parent->nleft + 1;*/
+        //update nleft
+
         /// if node has left subtree make the node parent its parent
         if (leftSon != nullptr) {
             leftSon->parent = parent;
@@ -197,6 +197,7 @@ node<T>* rightRotate(node<T>* parent) {
     node<T>* toRotate = parent->left;
     node<T>* rightSon = toRotate->right;
         /// if node has right subtree make the node parent its parent
+    //update nleft
     if (rightSon != nullptr) {
         rightSon->parent = parent;
     }
