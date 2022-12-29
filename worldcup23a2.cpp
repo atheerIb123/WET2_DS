@@ -22,31 +22,50 @@ StatusType world_cup_t::add_team(int teamId)
     }
 
     TeamByStats tempSt(teamId);
-    TeamById tempId(teamId);
-    
+    TeamById t(teamId);
+
     auto r = this->teamsIdTree.getRoot();
     if(this->teamsIdTree.getRoot() == nullptr)
     {
-        this->teamsIdTree.insert(&tempId);
+        this->teamsIdTree.insert(t);
         TeamByStats tempStats(teamId);
-        this->teamsStatsTree.insert(&tempStats);
+        this->teamsStatsTree.insert(tempStats);
         return StatusType::SUCCESS;
     }
-    if(this->teamsIdTree.search(teamsIdTree.getRoot(),&tempId) != nullptr)
+    if(this->teamsIdTree.search(teamsIdTree.getRoot(),t) != nullptr)
     {
         return StatusType::FAILURE;
     }
-    this->teamsIdTree.insert(&tempId);
+    this->teamsIdTree.insert(t);
     TeamByStats tempStats(teamId);
-    this->teamsStatsTree.insert(&tempStats);
+    this->teamsStatsTree.insert(tempStats);
     
 	return StatusType::SUCCESS;
 }
 
 StatusType world_cup_t::remove_team(int teamId)
 {
-	// TODO: Your code goes here
-	return StatusType::FAILURE;
+	if(teamId <= 0)
+    {
+        return StatusType::INVALID_INPUT;
+    }
+
+    TeamById x(teamId);
+    node<TeamById>* team = teamsIdTree.search(teamsIdTree.getRoot(), x);
+
+    if(team == nullptr)
+    {
+        return StatusType::FAILURE;
+    }
+
+    TeamByStats teamStats(teamId);
+    teamStats.increaseTeamAbility(team->key->getTeamAbility());
+    node<TeamByStats>* teamSt = teamsStatsTree.search(teamsStatsTree.getRoot(), teamStats);
+
+    teamsStatsTree.remove(*teamSt->key);
+    teamsIdTree.remove(x);
+
+    return StatusType::SUCCESS;
 }
 
 StatusType world_cup_t::add_player(int playerId, int teamId,
@@ -106,4 +125,16 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
 {
 	// TODO: Your code goes here
 	return StatusType::SUCCESS;
+}
+
+void world_cup_t::printOrder()
+{
+    for(int i = 0 ; i < teamsIdTree.n ; i++)
+    {
+        std::cout << teamsIdTree.select(i)->key->getTeamId() << std::endl;
+    }
+    for(int i = 0 ; i < teamsStatsTree.n ; i++)
+    {
+        std::cout << teamsStatsTree.select(i)->key->getTeamId() << std::endl;
+    }
 }
