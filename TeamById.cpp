@@ -102,3 +102,13 @@ void TeamById::mulPer(const permutation_t &other)
 {
     this->teamSpirit = this->teamSpirit * other;
 }
+
+permutation_t TeamById::getTeamSpirit() const
+{
+    return this->teamSpirit;
+}
+
+std::shared_ptr<int> TeamById::getGamesPlayedPointer() const
+{
+    return this->gamesPlayed;
+}

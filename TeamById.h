@@ -36,6 +36,8 @@ public:
     int getGamesPlayed() const;
     int getTeamPoints() const;
     int getTeamAbility() const;
+    permutation_t getTeamSpirit() const;
+    std::shared_ptr<int> getGamesPlayedPointer() const;
     void increaseTeamPoints(int value);
     void mulPer(const permutation_t& other);
     bool operator<(const TeamById& other) const;

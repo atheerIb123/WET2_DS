@@ -83,7 +83,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
 
 
     Player tempPlayer(playerId,std::make_shared<int>(teamId),spirit,gamesPlayed,std::make_shared<int>(cards),ability,goalKeeper);
-    tempPlayer.setGamesPlayedWithTeam(std::make_shared<int>(team->key_.getGamesPlayed()));
+    tempPlayer.setGamesPlayedWithTeam(team->key_.getGamesPlayedPointer());
     InvertedTree newNode(playerId, tempPlayer);
     this->playersTable.insert(&newNode);
     TeamByStats teamStats(teamId);
@@ -113,10 +113,60 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
 output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
 {
 	// TODO: Your code goes here
-    if (1 != 1)
+    if(teamId1 <= 0 || teamId2 <= 0 || teamId1 == teamId2)
+        return StatusType::INVALID_INPUT;
+
+
+    TeamById temp1(teamId1);
+    TeamById temp2(teamId2);
+    treeNode<TeamById>* team1 = this->teamsIdTree.search(teamsIdTree.getRoot(),temp1);
+    treeNode<TeamById>* team2 = this->teamsIdTree.search(teamsIdTree.getRoot(),temp2);
+    if(team1 == nullptr || team2 == nullptr)
+        return StatusType::FAILURE;
+
+    if(team1->key_.getTeamAbility() + team1->key_.getTeamPoints() > team2->key_.getTeamAbility() + team2->key_.getTeamPoints())
+    {//team1 wins
+        team1->key_.increaseTeamPoints(3);
+        team1->key_.increaseGamesPlayed(1);
+        team2->key_.increaseGamesPlayed(1);
         return StatusType::SUCCESS;
-    TeamById t(1);
-	return StatusType::SUCCESS;
+    }
+    else if(team1->key_.getTeamAbility() + team1->key_.getTeamPoints() < team2->key_.getTeamAbility() + team2->key_.getTeamPoints())
+    {//team2 wins
+        team2->key_.increaseTeamPoints(3);
+        team1->key_.increaseGamesPlayed(1);
+        team2->key_.increaseGamesPlayed(1);
+        return StatusType::SUCCESS;
+
+    }
+    else
+    {//same abilities
+        if(team1->key_.getTeamSpirit().strength() > team2->key_.getTeamSpirit().strength())
+        {
+            team1->key_.increaseTeamPoints(3);
+            team1->key_.increaseGamesPlayed(1);
+            team2->key_.increaseGamesPlayed(1);
+            return StatusType::SUCCESS;
+
+        }
+        else if(team1->key_.getTeamSpirit().strength() < team2->key_.getTeamSpirit().strength())
+        {
+            team2->key_.increaseTeamPoints(3);
+            team1->key_.increaseGamesPlayed(1);
+            team2->key_.increaseGamesPlayed(1);
+            return StatusType::SUCCESS;
+
+        }
+        else
+        {//tie
+            team1->key_.increaseTeamPoints(1);
+            team2->key_.increaseTeamPoints(1);
+            team1->key_.increaseGamesPlayed(1);
+            team2->key_.increaseGamesPlayed(1);
+            return StatusType::SUCCESS;
+
+        }
+    }
 }
 
 output_t<int> world_cup_t::num_played_games_for_player(int playerId)

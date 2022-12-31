@@ -30,17 +30,12 @@ int main()
 
     worldCup.add_player(10,1,per,0,3,0,false);
     worldCup.add_player(11,1,per,1,4,1,false);
-
     worldCup.add_player(12,1,per,0,3,0,true);
 
     worldCup.add_player(20,2,per,0,4,0,false);
     worldCup.add_player(21,2,per,0,0,0,false);
     worldCup.add_player(22,2,per,0,7,0,true);
-
-    auto x = worldCup.playersTable.find(10);
-    auto n = worldCup.playersTable.find(11);
-    auto z = worldCup.playersTable.find(12);
-
+    auto res = worldCup.play_match(1,2);
 
     worldCup.playersTable.find(20)->Union(worldCup.playersTable.find(12)->find());
 
