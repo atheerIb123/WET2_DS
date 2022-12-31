@@ -29,16 +29,20 @@ StatusType world_cup_t::add_team(int teamId)
         this->teamsIdTree.Insert(t);
         TeamByStats tempStats(teamId);
         this->teamsStatsTree.Insert(tempStats);
+        this->teamsIdTree.updateNodesNum(true);
+        this->teamsStatsTree.updateNodesNum(true);
         return StatusType::SUCCESS;
     }
     if(this->teamsIdTree.search(teamsIdTree.getRoot(),t) != nullptr)
     {
         return StatusType::FAILURE;
     }
+
     this->teamsIdTree.Insert(t);
     TeamByStats tempStats(teamId);
     this->teamsStatsTree.Insert(tempStats);
-
+    this->teamsIdTree.updateNodesNum(true);
+    this->teamsStatsTree.updateNodesNum(true);
     return StatusType::SUCCESS;
 }
 
@@ -63,6 +67,8 @@ StatusType world_cup_t::remove_team(int teamId)
 
     teamsStatsTree.Remove(teamSt->key_);
     teamsIdTree.Remove(x);
+    this->teamsIdTree.updateNodesNum(true);
+    this->teamsStatsTree.updateNodesNum(true);
 
     return StatusType::SUCCESS;
 }
@@ -92,7 +98,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
     team->key_.mulPer(spirit);
 
     this->teamsStatsTree.Remove(teamStats);
-    teamStats.increaseTeamAbility(team->key_.getTeamAbility());
+    teamStats.increaseTeamAbility(ability);
     this->teamsStatsTree.Insert(teamStats);
 
     if(team->key_.getPlayersNum() == 0)
@@ -106,8 +112,9 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
     }
     if(team->key_.captain.getPlayerId() != playerId)
         this->playersTable.find(playerId)->find()->Union(new InvertedTree(team->key_.captain.getPlayerId(), team->key_.captain));
-    
-	return StatusType::SUCCESS;
+
+
+    return StatusType::SUCCESS;
 }
 
 output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
@@ -124,11 +131,16 @@ output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
     if(team1 == nullptr || team2 == nullptr)
         return StatusType::FAILURE;
 
+    if(!team1->key_.isLegalTeam() || !team2->key_.isLegalTeam())
+        return StatusType::FAILURE;
+
+
     if(team1->key_.getTeamAbility() + team1->key_.getTeamPoints() > team2->key_.getTeamAbility() + team2->key_.getTeamPoints())
     {//team1 wins
         team1->key_.increaseTeamPoints(3);
         team1->key_.increaseGamesPlayed(1);
         team2->key_.increaseGamesPlayed(1);
+        return 1;
         return StatusType::SUCCESS;
     }
     else if(team1->key_.getTeamAbility() + team1->key_.getTeamPoints() < team2->key_.getTeamAbility() + team2->key_.getTeamPoints())
@@ -136,6 +148,7 @@ output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
         team2->key_.increaseTeamPoints(3);
         team1->key_.increaseGamesPlayed(1);
         team2->key_.increaseGamesPlayed(1);
+        return 3;
         return StatusType::SUCCESS;
 
     }
@@ -146,6 +159,7 @@ output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
             team1->key_.increaseTeamPoints(3);
             team1->key_.increaseGamesPlayed(1);
             team2->key_.increaseGamesPlayed(1);
+            return 2;
             return StatusType::SUCCESS;
 
         }
@@ -154,6 +168,7 @@ output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
             team2->key_.increaseTeamPoints(3);
             team1->key_.increaseGamesPlayed(1);
             team2->key_.increaseGamesPlayed(1);
+            return 4;
             return StatusType::SUCCESS;
 
         }
@@ -163,6 +178,7 @@ output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
             team2->key_.increaseTeamPoints(1);
             team1->key_.increaseGamesPlayed(1);
             team2->key_.increaseGamesPlayed(1);
+            return 0;
             return StatusType::SUCCESS;
 
         }
@@ -184,19 +200,44 @@ StatusType world_cup_t::add_player_cards(int playerId, int cards)
 output_t<int> world_cup_t::get_player_cards(int playerId)
 {
 	// TODO: Your code goes here
+    if(playerId <= 0)
+    {
+        return StatusType::INVALID_INPUT;
+    }
+    if(this->playersTable.find(playerId) == nullptr)
+    {
+        return StatusType::FAILURE;
+    }
+    return playersTable.find(playerId)->getData().getCardsAmount();
 	return StatusType::SUCCESS;
 }
 
 output_t<int> world_cup_t::get_team_points(int teamId)
 {
 	// TODO: Your code goes here
-	return 30003;
+    if(teamId <= 0)
+        return StatusType::INVALID_INPUT;
+
+
+    TeamById temp(teamId);
+    treeNode<TeamById>* team = teamsIdTree.search(teamsIdTree.getRoot(),temp);
+    if(team == nullptr)
+        return  StatusType::FAILURE;
+
+    return team->key_.getTeamPoints();
+	return StatusType::SUCCESS;
 }
 
 output_t<int> world_cup_t::get_ith_pointless_ability(int i)
 {
-	// TODO: Your code goes here
-	return 12345;
+    if(i < 0 || teamsIdTree.getNodesNum() == 0 || i >= this->teamsIdTree.getNodesNum() )
+    {
+        return StatusType::FAILURE;
+    }
+
+    int res = teamsStatsTree.select(i)->key_.getTeamId();
+	return (res);
+	return StatusType::SUCCESS;
 }
 
 output_t<permutation_t> world_cup_t::get_partial_spirit(int playerId)

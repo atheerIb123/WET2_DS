@@ -17,6 +17,7 @@ template<class T>
 class AvlRankTree {
 private:
     treeNode<T>* root_;
+    int nodesNum;
 public:
     AvlRankTree() : root_(NULL) {}
 
@@ -47,9 +48,20 @@ public:
     void Remove(const T& element) {
         root_ = Remove(root_, element);
     }
-    treeNode<T>* select(int k) const
+    treeNode<T>* select(int k)
     {
         return select(root_, k);
+    }
+    int getNodesNum() const
+    {
+        return this->nodesNum;
+    }
+    void updateNodesNum(bool add)
+    {
+        if(add == true)
+            nodesNum++;
+        else
+            nodesNum--;
     }
 private:
     // Recursive function to insert a key into the tree
@@ -68,7 +80,6 @@ private:
         // Update the height and size of the node
         node->height_ = std::max(GetHeight(node->left_), GetHeight(node->right_)) + 1;
         node->size_ = GetSize(node->left_) + GetSize(node->right_) + 1;
-
         // Balance the tree
         int balance = GetBalance(node);
         if (balance > 1 && key < node->left_->key_) {
@@ -108,15 +119,26 @@ private:
     }
     treeNode<T>* select(treeNode<T>* v, int k)
     {
-        if(v->left_->size_ == k-1)
+        int Vleft;
+
+        if(v->left_ == nullptr)
+        {
+            Vleft = 0;
+        }
+        else
+        {
+            Vleft = v->left_->size_;
+        }
+
+        if(Vleft == k)
         {
             return v;
         }
-        else if(v->left_->size_ > k-1)
+        else if(Vleft > k)
         {
             return select(v->left_,k);
         }
-        else if(v->left_->size_ < k-1)
+        else if(Vleft < k)
         {
             return select(v->right_, k-v->left_->size_-1);
         }
@@ -210,7 +232,7 @@ private:
             } else {  // node has two children
                 // Find the minimum element in the right subtree
                 treeNode<T>* temp = node->right_;
-                while(node->left_ != nullptr)
+                while(temp->left_ != nullptr)
                     temp = temp->left_;
                 // Replace the element of the node to remove with the element of the minimum element
                 node->key_ = temp->key_;
@@ -221,7 +243,6 @@ private:
 
         // Update the size of the node
         node->size_ = 1 + GetSize(node->left_) + GetSize(node->right_);
-
         // Rebalance the tree if necessary
         return Balance(node);
     }

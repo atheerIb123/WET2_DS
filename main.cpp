@@ -25,24 +25,32 @@ int main()
 
     permutation_t per;
     world_cup_t worldCup;
-    worldCup.add_team(1);
-    worldCup.add_team(2);
+    worldCup.add_team(100);
+    worldCup.add_team(200);
+    worldCup.add_team(99);
+    worldCup.add_team(500);
+    worldCup.add_team(98);
 
-    worldCup.add_player(10,1,per,0,3,0,false);
-    worldCup.add_player(11,1,per,1,4,1,false);
-    worldCup.add_player(12,1,per,0,3,0,true);
+    worldCup.add_player(30,99,per,0,100,0,false);
+    worldCup.add_player(60,98,per,0,100,0,false);
 
-    worldCup.add_player(20,2,per,0,4,0,false);
-    worldCup.add_player(21,2,per,0,0,0,false);
-    worldCup.add_player(22,2,per,0,7,0,true);
-    auto res = worldCup.play_match(1,2);
-
-    worldCup.playersTable.find(20)->Union(worldCup.playersTable.find(12)->find());
-
-    auto y = worldCup.playersTable.find(20);
+    worldCup.add_player(31,500,per,1,0,1,false);
 
 
+    worldCup.add_player(10,100,per,0,3,0,false);
+    worldCup.add_player(11,100,per,1,4,1,false);
+    worldCup.add_player(12,100,per,0,3,0,true);
 
+    worldCup.add_player(20,200,per,0,4,0,false);
+    worldCup.add_player(21,200,per,0,0,0,false);
+    worldCup.add_player(22,200,per,0,10,0,true);
+
+
+    int a = worldCup.get_ith_pointless_ability(0).ans();
+    int b = worldCup.get_ith_pointless_ability(1).ans();
+    int c = worldCup.get_ith_pointless_ability(2).ans();
+    int d = worldCup.get_ith_pointless_ability(-3).ans();
+    int e = worldCup.get_ith_pointless_ability(5).ans();
 
 
 
