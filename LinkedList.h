@@ -7,15 +7,15 @@
 
 #include <iostream>
 #include "Player.h"
-
+#include "UF.h"
 class Node {
 public:
-    Node(const Player& employee);
+    Node(const InvertedTree& employee);
     Node(const Node& node);
     Node& operator=(const Node& node);
     ~Node();
 
-    Player* data;
+    InvertedTree* data;
     Node* next;
 };
 
@@ -30,10 +30,10 @@ public:
     LinkedList& operator=(const LinkedList& linked_list);
     ~LinkedList();
 
-    void insert(const Player& employee);
+    void insert(const InvertedTree& employee);
     void remove(const int id);
     Node* find(const int id);
-    Player* getPlayerData(Node* node);
+    Player& getPlayerData(Node* node);
     void setHead(Node* newHead);
     Node* getHead() { return head; }
     int getSize() { return size; }

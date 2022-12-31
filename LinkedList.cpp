@@ -1,10 +1,10 @@
 #include "LinkedList.h"
 
-Node::Node(const Player& player) : data(new Player(player)), next(nullptr) {}
+Node::Node(const InvertedTree& player) : data(new InvertedTree(player)), next(nullptr) {}
 
 Node::Node(const Node& node)
 {
-    data = new Player(*(node.data));
+    data = new InvertedTree(*(node.data));
     if (node.next) {
         next = new Node(*(node.next));
     }
@@ -18,7 +18,7 @@ Node& Node::operator=(const Node& node)
     if (this == &node) {
         return *this;
     }
-    data = new Player(*(node.data));
+    data = new InvertedTree(*(node.data));
     if (node.next != nullptr) {
         delete this->next;
         next = new Node(*(node.next));
@@ -74,7 +74,7 @@ LinkedList::~LinkedList()
     }
 }
 
-void LinkedList::insert(const Player& player)
+void LinkedList::insert(const InvertedTree& player)
 {
     Node* node_to_add = new Node(player);
     if (head == nullptr) {
@@ -96,14 +96,14 @@ void LinkedList::remove(const int id)
         return;
     }
     Node* currentNode = head;
-    if (currentNode->data->getPlayerId() == id) {
+    if (currentNode->data->getData().getPlayerId() == id) {
         head = head->next;
         delete currentNode;
         size--;
         return;
     }
     while (currentNode->next) {
-        if (currentNode->next->data->getPlayerId() == id) {
+        if (currentNode->next->data->getData().getPlayerId() == id) {
             Node* toDelete = currentNode->next;
             Node* tempNode = toDelete->next;
             currentNode->next = tempNode;
@@ -117,10 +117,12 @@ void LinkedList::remove(const int id)
 
 Node* LinkedList::find(const int id)
 {
+    int currentId;
     if (head) {
         Node* currentNode = head;
         while (currentNode) {
-            if (currentNode->data->getPlayerId() == id) {
+            currentId = currentNode->data->getKey();
+            if (currentId == id) {
                 return currentNode;
             }
             currentNode = currentNode->next;
@@ -129,12 +131,12 @@ Node* LinkedList::find(const int id)
     return nullptr;
 }
 
-Player* LinkedList::getPlayerData(Node* node)
+Player& LinkedList::getPlayerData(Node* node)
 {
     if (node) {
-        return node->data;
+        return node->data->getData();
     }
-    return nullptr;
+    //return nullptr;
 }
 
 void LinkedList::setHead(Node* newHead)

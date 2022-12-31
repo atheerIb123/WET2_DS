@@ -2,8 +2,7 @@
 
 world_cup_t::world_cup_t()
 {
-    this->teamsIdTree.n = 0;
-    this->teamsStatsTree.n = 0;
+
 
     // TODO: Your code goes here
 }
@@ -13,9 +12,10 @@ world_cup_t::~world_cup_t()
 	// TODO: Your code goes here
 }
 
+
 StatusType world_cup_t::add_team(int teamId)
 {
-	// TODO: Your code goes here
+    // TODO: Your code goes here
     if(teamId <= 0)
     {
         return StatusType::INVALID_INPUT;
@@ -24,34 +24,33 @@ StatusType world_cup_t::add_team(int teamId)
     TeamByStats tempSt(teamId);
     TeamById t(teamId);
 
-    auto r = this->teamsIdTree.getRoot();
-    if(this->teamsIdTree.getRoot() == nullptr)
+    if(this->teamsIdTree.getRoot())
     {
-        this->teamsIdTree.insert(t);
+        this->teamsIdTree.Insert(t);
         TeamByStats tempStats(teamId);
-        this->teamsStatsTree.insert(tempStats);
+        this->teamsStatsTree.Insert(tempStats);
         return StatusType::SUCCESS;
     }
     if(this->teamsIdTree.search(teamsIdTree.getRoot(),t) != nullptr)
     {
         return StatusType::FAILURE;
     }
-    this->teamsIdTree.insert(t);
+    this->teamsIdTree.Insert(t);
     TeamByStats tempStats(teamId);
-    this->teamsStatsTree.insert(tempStats);
-    
-	return StatusType::SUCCESS;
+    this->teamsStatsTree.Insert(tempStats);
+
+    return StatusType::SUCCESS;
 }
 
 StatusType world_cup_t::remove_team(int teamId)
 {
-	if(teamId <= 0)
+    if(teamId <= 0)
     {
         return StatusType::INVALID_INPUT;
     }
 
     TeamById x(teamId);
-    node<TeamById>* team = teamsIdTree.search(teamsIdTree.getRoot(), x);
+    treeNode<TeamById>* team = teamsIdTree.search(teamsIdTree.getRoot(), x);
 
     if(team == nullptr)
     {
@@ -59,11 +58,11 @@ StatusType world_cup_t::remove_team(int teamId)
     }
 
     TeamByStats teamStats(teamId);
-    teamStats.increaseTeamAbility(team->key->getTeamAbility());
-    node<TeamByStats>* teamSt = teamsStatsTree.search(teamsStatsTree.getRoot(), teamStats);
+    teamStats.increaseTeamAbility(team->key_.getTeamAbility());
+    treeNode<TeamByStats>* teamSt = teamsStatsTree.search(teamsStatsTree.getRoot(), teamStats);
 
-    teamsStatsTree.remove(*teamSt->key);
-    teamsIdTree.remove(x);
+    teamsStatsTree.Remove(teamSt->key_);
+    teamsIdTree.Remove(x);
 
     return StatusType::SUCCESS;
 }
@@ -73,6 +72,41 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
                                    int ability, int cards, bool goalKeeper)
 {
 	// TODO: Your code goes here
+    if(playerId <= 0 || teamId <= 0 || gamesPlayed < 0 || cards < 0 /*|| spirit.isvalid() == false*/)
+        return StatusType::INVALID_INPUT;
+
+    TeamById tempId(teamId);
+    treeNode<TeamById>* team = teamsIdTree.search(teamsIdTree.getRoot(),tempId);
+    if(team == nullptr || (this->playersTable.find(playerId) != nullptr && this->playersTable.find(playerId)->getData().getPlayerId() == playerId))
+        return StatusType::FAILURE;
+
+
+
+    Player tempPlayer(playerId,std::make_shared<int>(teamId),spirit,gamesPlayed,std::make_shared<int>(cards),ability,goalKeeper);
+    tempPlayer.setGamesPlayedWithTeam(std::make_shared<int>(team->key_.getGamesPlayed()));
+    InvertedTree newNode(playerId, tempPlayer);
+    this->playersTable.insert(&newNode);
+    TeamByStats teamStats(teamId);
+    teamStats.increaseTeamAbility(team->key_.getTeamAbility());
+    team->key_.increaseTeamAbility(ability);
+    team->key_.mulPer(spirit);
+
+    this->teamsStatsTree.Remove(teamStats);
+    teamStats.increaseTeamAbility(team->key_.getTeamAbility());
+    this->teamsStatsTree.Insert(teamStats);
+
+    if(team->key_.getPlayersNum() == 0)
+    {
+        team->key_.captain = tempPlayer;
+    }
+    team->key_.addPlayerToCount();
+    if(goalKeeper == true)
+    {
+        team->key_.setTeamIsLegal();
+    }
+    if(team->key_.captain.getPlayerId() != playerId)
+        this->playersTable.find(playerId)->find()->Union(new InvertedTree(team->key_.captain.getPlayerId(), team->key_.captain));
+    
 	return StatusType::SUCCESS;
 }
 
@@ -125,16 +159,4 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
 {
 	// TODO: Your code goes here
 	return StatusType::SUCCESS;
-}
-
-void world_cup_t::printOrder()
-{
-    for(int i = 0 ; i < teamsIdTree.n ; i++)
-    {
-        std::cout << teamsIdTree.select(i)->key->getTeamId() << std::endl;
-    }
-    for(int i = 0 ; i < teamsStatsTree.n ; i++)
-    {
-        std::cout << teamsStatsTree.select(i)->key->getTeamId() << std::endl;
-    }
 }

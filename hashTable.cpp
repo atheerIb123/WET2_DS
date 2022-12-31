@@ -21,7 +21,7 @@ HashTable::HashTable(const HashTable& hash_table) : size(hash_table.size), count
     for (int i = 0; i < size; i++) {
         Node* currentNode = (hash_table.players)[i]->getHead();
         while (currentNode) {
-            this->insert(*(currentNode->data));
+            this->insert((currentNode->data));
             currentNode = currentNode->next;
         }
     }
@@ -91,9 +91,9 @@ void HashTable::resize(int new_size, LinkedList* old_players_array[], int old_si
     Node* currentNode = allPlayers->getHead();
     for (int i = 0; i < counter; i++)
     {
-        Player* currentPlayer = currentNode->data;
+        InvertedTree* currentPlayer = currentNode->data;
         currentNode->data = nullptr;
-        int index = HashFunction(currentPlayer->getPlayerId());
+        int index = HashFunction(currentPlayer->getData().getPlayerId());
         if (!new_players_arr[index])
         {
             new_players_arr[index] = new LinkedList();
@@ -110,7 +110,7 @@ int HashTable::HashFunction(int playerId)
     return (playerId % size);
 }
 
-Player* HashTable::find(int player)
+InvertedTree* HashTable::find(int player)
 {
     int index = HashFunction(player);
     if (players[index]->find(player)) {
@@ -119,34 +119,34 @@ Player* HashTable::find(int player)
     return nullptr;
 }
 
-HashTableStatus HashTable::insert(Player& player)
+HashTableStatus HashTable::insert(InvertedTree* player)
 {
     if (counter == size / 2) {
         resize(2 * size, players, size);
     }
 
-    int index = HashFunction(player.getPlayerId());
+    int index = HashFunction(player->getData().getPlayerId());
 
-    if (players[index] && find(player.getPlayerId())) {
+    if (players[index] && find(player->getData().getPlayerId())) {
         return HASH_TABLE_PLAYER_ALREADY_EXISTS;
     }
-    players[index]->insert(player);
+    players[index]->insert(*player);
     counter++;
     return HASH_TABLE_SUCCESS;
 }
 
-HashTableStatus HashTable::remove(Player& player)
+HashTableStatus HashTable::remove(InvertedTree& player)
 {
     if (counter == size / 4) {
         resize((int)(0.5 * size), players, size);
     }
 
-    int index = HashFunction(player.getPlayerId());
-    if (!players[index] || !players[index]->find(player.getPlayerId())) {
+    int index = HashFunction(player.getData().getPlayerId());
+    if (!players[index] || !players[index]->find(player.getData().getPlayerId())) {
         return HASH_TABLE_PLAYER_NOT_FOUND;
     }
 
-    players[index]->remove(player.getPlayerId());
+    players[index]->remove(player.getData().getPlayerId());
     if (!players[index]->getHead()) {
         delete players[index]; //delete linkedlist
         players[index] = new LinkedList();

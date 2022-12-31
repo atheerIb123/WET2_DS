@@ -19,18 +19,19 @@
 #include "RankedAvlTree.h"
 #include "TeamByStats.h"
 #include "TeamById.h"
+#include "hashTable.h"
+#include "Player.h"
 
 class world_cup_t {
 private:
-	AVLRankTree<TeamById*> teamsIdTree;
-    AVLRankTree<TeamByStats*> teamsStatsTree;
+	AvlRankTree<TeamById> teamsIdTree;
+    AvlRankTree<TeamByStats> teamsStatsTree;
 
 
 
 
 public:
-	// <DO-NOT-MODIFY> {
-	
+    HashTable playersTable;
 	world_cup_t();
 	virtual ~world_cup_t();
 	

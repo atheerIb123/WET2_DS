@@ -7,8 +7,11 @@
 
 TeamById::TeamById(int teamId)
 {
+    this->playersNum = 0;
     this->teamPoints = 0;
+    this->allPlayersAbility = 0;
     teamId_ = teamId;
+    hasGK = false;
     this->gamesPlayed = std::make_shared<int>(0);
 }
 void TeamById::increaseTeamAbility(int value)
@@ -68,4 +71,34 @@ int TeamById::getTeamPoints() const
 void TeamById::increaseTeamPoints(int value)
 {
     this->teamPoints += value;
+}
+
+int TeamById::getTeamAbility() const
+{
+    return this->allPlayersAbility;
+}
+
+int TeamById::getPlayersNum() const
+{
+    return this->playersNum;
+}
+
+void TeamById::addPlayerToCount()
+{
+    this->playersNum++;
+}
+
+void TeamById::setTeamIsLegal()
+{
+    this->hasGK = true;
+}
+
+bool TeamById::isLegalTeam() const
+{
+    return hasGK;
+}
+
+void TeamById::mulPer(const permutation_t &other)
+{
+    this->teamSpirit = this->teamSpirit * other;
 }

@@ -31,10 +31,10 @@ public:
 
     void resize(int new_size, LinkedList* old_players_array[], int old_size);
     int HashFunction(int playerId);
-    Player* find(int playerId);
+    InvertedTree* find(int playerId);
 
-    HashTableStatus insert(Player& player);
-    HashTableStatus remove(Player& player);
+    HashTableStatus insert(InvertedTree* player);
+    HashTableStatus remove(InvertedTree& player);
     int getCounter() { return counter; }
     int getSize() { return size; }
     //void updatePlayerCompanyID(int acquirerID);

@@ -1,277 +1,265 @@
-#include<iostream>
-using namespace std;
+#include <iostream>
 
-template<class T>
-class node
-{
+// Node class for AVL tree
+template <class T>
+class treeNode{
 public:
-    T* key;
-    int nleft;
-    int height;
-    node* left;
-    node* right;
-    node* parent;
-    node(T k, node* p) {
-        parent = p;
-        nleft = 0;
-        key = new T(k);
-        left = NULL;
-        right = NULL;
-    }
+    treeNode(T key) : key_(key), left_(NULL), right_(NULL), height_(1), size_(1) {}
+    T key_;
+    treeNode* left_;
+    treeNode* right_;
+    int height_;
+    int size_;
 };
 
-
-template <class T>
-class AVLRankTree {
+// AVL tree class
+template<class T>
+class AvlRankTree {
 private:
-    node<T>* root = NULL;
-    node<T>* root_ = NULL;
-
+    treeNode<T>* root_;
 public:
-    int n;
-    void insert(T x) {
-        root = insertUtil(root, x, NULL);
-    }
-    void remove(T x) {
-        root = removeUtil(root, x, NULL);
-    }
-    node<T>* getRoot()
+    AvlRankTree() : root_(NULL) {}
+
+    // Insert a key into the tree
+    void Insert(T key) { root_ = Insert(root_, key); }
+
+    // Get the rank (i.e., number of keys less than or equal to a given key) of a key
+    int GetRank(T key) { return GetRank(root_, key); }
+
+    treeNode<T>* getRoot() const
     {
-        return this->root;
+        return this->root_;
     }
-    node<T>* search(node<T>* root, T x)
+    treeNode<T>* search(treeNode<T>* root, T x)
     {
         if (root == nullptr)
         {
             return nullptr;
         }
-        if (x == *root->key)
+        if (x == root->key_)
             return root;
-        else if (x < *root->key)
-            return search(root->right, x);
-        else if (x > *root->key)
-            return search(root->left, x);
+        else if (x < root->key_)
+            return search(root->left_, x);
+        else if (x > root->key_)
+            return search(root->right_, x);
         return nullptr;
     }
-    void inorder() {
-        inorderUtil(root);
-        cout << endl;
+    void Remove(const T& element) {
+        root_ = Remove(root_, element);
     }
-    T ksmallest(int k) {
-        return ksmallestUtil(root, k);
-    }
-    int rank(T x) {
-        return rankUtil(root, x, 0);
-    }
-    node<T>* select(int k)
+    treeNode<T>* select(int k) const
     {
-        k += 1;
-        if (k > this->n)
-        {
-            return nullptr;
-        }
-        return selectUtil(root, k);
+        return select(root_, k);
     }
 private:
-    void inorderUtil(node<T>* head) {
-        if (head == NULL) return;
-        inorderUtil(head->left);
-        cout << head->key << " ";
-        inorderUtil(head->right);
-    }
-    node<T>* insertUtil(node<T>* head, T x, node<T>* p) {
-        if (head == NULL) {
-            n++;
-            node<T>* temp = new node<T>(x, p);
-            while (p != NULL) {
-                if (x < *p->key) p->nleft += 1;
-                p = p->parent;
-            }
-            if (n == 1)
-                root_ = temp;
-            head = balanceTree(head);
-            return temp;
+    // Recursive function to insert a key into the tree
+    treeNode<T>* Insert(treeNode<T>* node, T key) {
+        if (node == NULL) return new treeNode(key);
+
+        if (key < node->key_) {
+            node->left_ = Insert(node->left_, key);
+        } else if (key > node->key_) {
+            node->right_ = Insert(node->right_, key);
+        } else {
+            // Key already exists in the tree, do nothing
+            return node;
         }
-        if (x > *head->key)
-            head->right = insertUtil(head->right, x, head);
-        else if (x < *head->key) head->left = insertUtil(head->left, x, head);
-        head = balanceTree(head);
-        return head;
+
+        // Update the height and size of the node
+        node->height_ = std::max(GetHeight(node->left_), GetHeight(node->right_)) + 1;
+        node->size_ = GetSize(node->left_) + GetSize(node->right_) + 1;
+
+        // Balance the tree
+        int balance = GetBalance(node);
+        if (balance > 1 && key < node->left_->key_) {
+            // Left-left case
+            return RotateRight(node);
+        }
+        if (balance < -1 && key > node->right_->key_) {
+            // Right-right case
+            return RotateLeft(node);
+        }
+        if (balance > 1 && key > node->left_->key_) {
+            // Left-right case
+            node->left_ = RotateLeft(node->left_);
+            return RotateRight(node);
+        }
+        if (balance < -1 && key < node->right_->key_) {
+            // Right-left case
+            node->right_ = RotateRight(node->right_);
+            return RotateLeft(node);
+        }
+
+        return node;
     }
-    node<T>* searchUtil(node<T>* head, T x) {
-        if (head == NULL) return NULL;
-        T k = head->key;
-        if (k == x) return head;
-        if (k > x) return searchUtil(head->left, x);
-        if (k < x) return searchUtil(head->right, x);
+
+    // Recursive function to get the rank of a key
+    int GetRank(treeNode<T>* node, T key) {
+        if (node == NULL) return -1;
+
+        if (key < node->key_) {
+            return GetRank(node->left_, key);
+        } else if (key > node->key_) {
+            return 1 + GetSize(node->left_) + GetRank(node->right_, key);
+        } else {
+            // Key found, return the number of keys less than or equal to it
+            return GetSize(node->left_);
+        }
     }
-    int rankUtil(node<T>* head, T x, int r) {
-        if (head == NULL) return 0;
-        T k = *head->key;
-        if (k == x) return r + 1 + head->nleft;
-        if (k > x) return rankUtil(head->left, x, r);
-        if (k < x) return rankUtil(head->right, x, r + head->nleft + 1);
-    }
-    node<T>* selectUtil(node<T>* head, int k)
+    treeNode<T>* select(treeNode<T>* v, int k)
     {
-        if (head->nleft == k - 1)
+        if(v->left_->size_ == k-1)
         {
-            return head;
+            return v;
         }
-        else if (head->nleft > k - 1)
+        else if(v->left_->size_ > k-1)
         {
-            return selectUtil(head->left, k);
+            return select(v->left_,k);
         }
-        else if (head->nleft < k - 1)
+        else if(v->left_->size_ < k-1)
         {
-            return selectUtil(head->right, k - head->nleft - 1);
+            return select(v->right_, k-v->left_->size_-1);
         }
-        return nullptr;
     }
-    node<T>* removeUtil(node<T>* head, T x, node<T>* p) {
-        if (head == NULL) return NULL;
-        if (x == *head->key) {
-            node<T>* l = head->left;
-            node<T>* r = head->right;
-            while (p != NULL) {
-                if (x < *p->key) p->nleft -= 1;
-                p = p->parent;
-            }
-            if (l == NULL) {
-                delete(head);
-                head = balanceTree(head);
-                return r;
-            }
-            if (r == NULL) {
-                delete(head);
-                return l;
-            }
-            while (r->left != NULL) r = r->left;
-            head->key = r->key;
-            head->right = removeUtil(head->right, *r->key, NULL);
-            head = balanceTree(head);
-            return head;
-        }
-        if (x < *head->key) head->left = removeUtil(head->left, x, head);
-        else head->right = removeUtil(head->right, x, head);
-        head = balanceTree(head);
-        return head;
+    // Get the height of a node
+    int GetHeight(treeNode<T>* node) {
+        if (node == NULL) return 0;
+        return node->height_;
     }
 
-    T& ksmallestUtil(node<T>* head, int k) {
-        if (k<1 || k>n) return NULL;
-        if (head->nleft == k - 1) return head->key;
-        if (head->nleft > k - 1) return ksmallestUtil(head->left, k);
-        return ksmallestUtil(head->right, k - 1 - head->nleft);
+    // Get the size (i.e., number of nodes) of a subtree
+    int GetSize(treeNode<T>* node) {
+        if (node == NULL) return 0;
+        return node->size_;
     }
-    node<T>* leftRotate(node<T>* parent) {
-        node<T>* toRotate = parent->right;
-        node<T>* leftSon = toRotate->left;
-        //update nleft
 
-        /// if node has left subtree make the node parent its parent
-        if (leftSon != nullptr) {
-            leftSon->parent = parent;
-        }
-        parent->right = leftSon;
-        /// if node parent is root make node root, if not root make son of grandparent
-        toRotate->parent = parent->parent;
-        if (parent->parent == nullptr) {
-            root = toRotate;
-        }
-        else if (parent->parent->left == parent) {
-            parent->parent->left = toRotate;
-        }
-        else {
-            parent->parent->right = toRotate;
-        }
-        /// make node parent of parent
-        toRotate->left = parent;
-        parent->parent = toRotate;
-        parent->height = 1 + max(getBalance(parent->right), getBalance(parent->left));
-        toRotate->height = 1 + max(getBalance(toRotate->right), getBalance(toRotate->left));
-        return toRotate;
+    // Get the balance factor of a node (left subtree height - right subtree height)
+    int GetBalance(treeNode<T>* node) {
+        if (node == NULL) return 0;
+        return GetHeight(node->left_) - GetHeight(node->right_);
     }
-    
-node<T>* rightRotate(node<T>* parent) {
-    node<T>* toRotate = parent->left;
-    node<T>* rightSon = toRotate->right;
-        /// if node has right subtree make the node parent its parent
-    //update nleft
-    if (rightSon != nullptr) {
-        rightSon->parent = parent;
-    }
-        parent->left = rightSon;
-        /// if node parent is root make node root, if not root make son of grandparent
-        toRotate->parent = parent->parent;
-        if (parent->parent == nullptr) {
-            root = toRotate;
-        }
-        else if (parent->parent->right == parent) {
-            parent->parent->right = toRotate;
-        }
-        else {
-            parent->parent->left = toRotate;
-        }
-        /// make node parent of parent
-        toRotate->right = parent;
-        parent->parent = toRotate;
-        parent->height = 1 + max(getBalance(parent->right), getBalance(parent->left));
-        toRotate->height = 1 + max(getBalance(toRotate->right), getBalance(toRotate->left));
-        return toRotate;
-}
-int calcHeight(node<T>* root)
-{
-    if (root == nullptr)
+    int getBalance(treeNode<T>* root)
     {
-        return 0;
+        int Hleft;
+        int Hright;
+        if (root)
+        {
+            if(root->left_)
+                Hleft = root->left_->height_;
+            else
+                Hleft = 0;
+            if(root->right_)
+                Hright = root->right_->height_;
+            else
+                Hright = 0;
+            return (Hleft - Hright);
+        }
     }
 
-    int leftHeight = calcHeight(root->left);
-    int rightHeight = calcHeight(root->right);
 
-    return 1 + max(leftHeight, rightHeight);
-}
-int getBalance(node<T>* root)
-{
-    if (root)
+    inline treeNode<T>* Balance(treeNode<T>* root)
     {
-        return (calcHeight(root->left) - calcHeight(root->right));
-    }
-}
-
-inline node<T>* balanceTree(node<T>* root)
-{
-    if (root != nullptr)
-    {
+        if (root != nullptr)
+        {
             if (getBalance(root) == 2)
             {
-                if (getBalance(root->left) >= 0)
+                if (getBalance(root->left_) >= 0)
                 {
-                    return rightRotate(root);
+                    return RotateRight(root);
                 }
-                else if (getBalance(root->left) == -1)
+                else if (getBalance(root->left_) == -1)
                 {
-                    root->left = leftRotate(root->left);
-                    return rightRotate(root);
+                    root->left_ = RotateLeft(root->left_);
+                    return RotateRight(root);
                 }
             }
             else if (getBalance(root) == -2)
             {
-                if (getBalance(root->right) <= 0)
+                if (getBalance(root->right_) <= 0)
                 {
-                    return leftRotate(root);
+                    return RotateLeft(root);
                 }
-                else if (getBalance(root->right) == 1)
+                else if (getBalance(root->right_) == 1)
                 {
-                    root->right = rightRotate(root->right);
-                    return leftRotate(root);
+                    root->right_ = RotateRight(root->right_);
+                    return RotateLeft(root);
                 }
             }
         }
 
         return root;
-}
+    }
 
+
+
+
+    treeNode<T>* Remove(treeNode<T>* node, const T& element) {
+        if (node == nullptr) return nullptr;
+
+        // Find the node to remove
+        if (element < node->key_) {
+            node->left_ = Remove(node->left_, element);
+        } else if (element > node->key_) {
+            node->right_ = Remove(node->right_, element);
+        } else {  // element == node->element
+            // Handle the case where the node has no children or only one child
+            if (node->left_ == nullptr || node->right_ == nullptr) {
+                treeNode<T>* temp = (node->left_ == nullptr) ? node->right_ : node->left_;
+                delete node;
+                return temp;
+            } else {  // node has two children
+                // Find the minimum element in the right subtree
+                treeNode<T>* temp = node->right_;
+                while(node->left_ != nullptr)
+                    temp = temp->left_;
+                // Replace the element of the node to remove with the element of the minimum element
+                node->key_ = temp->key_;
+                // Remove the minimum element from the right subtree
+                node->right_ = Remove(node->right_, temp->key_);
+            }
+        }
+
+        // Update the size of the node
+        node->size_ = 1 + GetSize(node->left_) + GetSize(node->right_);
+
+        // Rebalance the tree if necessary
+        return Balance(node);
+    }
+    // Rotate a subtree to the right
+    treeNode<T>* RotateRight(treeNode<T>* node)
+    {
+        treeNode<T>* left = node->left_;
+        treeNode<T>* right = left->right_;
+
+        left->right_ = node;
+        node->left_ = right;
+
+        // Update the height and size of the nodes
+        node->height_ = std::max(GetHeight(node->left_), GetHeight(node->right_)) + 1;
+        node->size_ = GetSize(node->left_) + GetSize(node->right_) + 1;
+        left->height_ = std::max(GetHeight(left->left_), GetHeight(left->right_)) + 1;
+        left->size_ = GetSize(left->left_) + GetSize(left->right_) + 1;
+
+        return left;
+    }
+
+    // Rotate a subtree to the left
+    treeNode<T>* RotateLeft(treeNode<T>* node) {
+        treeNode<T>* right = node->right_;
+        treeNode<T>* left = right->left_;
+
+        right->left_ = node;
+        node->right_ = left;
+
+        // Update the height and size of the nodes
+        node->height_ = std::max(GetHeight(node->left_), GetHeight(node->right_)) + 1;
+        node->size_ = GetSize(node->left_) + GetSize(node->right_) + 1;
+        right->height_ = std::max(GetHeight(right->left_), GetHeight(right->right_)) + 1;
+        right->size_ = GetSize(right->left_) + GetSize(right->right_) + 1;
+
+        return right;
+    }
 
 };
+
+

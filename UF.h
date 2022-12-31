@@ -1,11 +1,10 @@
 #include <iostream>
 #include "Player.h"
-#include "hashTable.h"
 
 class InvertedTree {
 private:
     int key;
-    Player *data;
+    Player data;
     int size;
     long double acquired_value;
     InvertedTree* next;
@@ -15,12 +14,13 @@ private:
     void updateAcquiredValue(InvertedTree *node);
 
 public:
-    InvertedTree(int key, Player* data) : key(key), data(data), size(1), acquired_value(0), next(nullptr) {}
+    InvertedTree(int key, Player data) : key(key), data(data), size(1), acquired_value(0), next(nullptr) {}
     InvertedTree(const InvertedTree& invertedTree) = default;
     InvertedTree& operator=(const InvertedTree& invertedTree) = default;
     ~InvertedTree() = default;
 
-    Player* getData() { return data; }
+    Player& getData() { return data; }
+    int getKey() const {return key;}
     long double getAcquiredValue() { return acquired_value; }
     InvertedTree* find();
     void Union(InvertedTree* root);
