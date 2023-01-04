@@ -130,17 +130,17 @@ private:
             Vleft = v->left_->size_;
         }
 
-        if(Vleft == k)
+        if(Vleft == k - 1)
         {
             return v;
         }
-        else if(Vleft > k)
+        else if(Vleft > k - 1)
         {
             return select(v->left_,k);
         }
-        else if(Vleft < k)
+        else if(Vleft < k - 1)
         {
-            return select(v->right_, k-v->left_->size_-1);
+            return select(v->right_, k - Vleft - 1);
         }
     }
     // Get the height of a node

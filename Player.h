@@ -33,6 +33,7 @@ public:
     bool isEliminated() const;
     int getGamesPlayed() const;
     std::shared_ptr<int>& getGamesPlayedWithTeam();
+    void setTeamId(std::shared_ptr<int>& newTeamIdPtr);
     void addCards(int amount);
     int getCardsAmount() const;
     int getPlayerId() const;

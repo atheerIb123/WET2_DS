@@ -20,8 +20,14 @@ StatusType world_cup_t::add_team(int teamId)
     {
         return StatusType::INVALID_INPUT;
     }
+
+    if(teamId == 27)
+    {
+        printf("");
+    }
     TeamByStats tempSt(teamId);
     TeamById t(teamId);
+
     if(this->teamsIdTree.search(teamsIdTree.getRoot(),t) != nullptr)
     {
         return StatusType::FAILURE;
@@ -57,7 +63,7 @@ StatusType world_cup_t::remove_team(int teamId)
     TeamById x(teamId);
     treeNode<TeamById>* team = teamsIdTree.search(teamsIdTree.getRoot(), x);
 
-    if(teamId == 3)
+    if(teamId == 6)
     {
         printf("");
     }
@@ -84,12 +90,14 @@ StatusType world_cup_t::remove_team(int teamId)
 
 StatusType world_cup_t::add_player(int playerId, int teamId,
                                    const permutation_t &spirit, int gamesPlayed,
-                                   int ability, int cards, bool goalKeeper)
-{
-	// TODO: Your code goes here
-    if(playerId <= 0 || teamId <= 0 || gamesPlayed < 0 || cards < 0 || spirit.isvalid() == false)
+                                   int ability, int cards, bool goalKeeper) {
+    // TODO: Your code goes here
+    if (playerId <= 0 || teamId <= 0 || gamesPlayed < 0 || cards < 0 || spirit.isvalid() == false)
         return StatusType::INVALID_INPUT;
-    if(playerId == 1002)
+    if (playerId == 1002) {
+        printf("");
+    }
+    if (teamId == 17)
     {
         printf("");
     }
@@ -224,6 +232,11 @@ StatusType world_cup_t::add_player_cards(int playerId, int cards)
 	// TODO: Your code goes here
     if(playerId <= 0 || cards < 0)
         return StatusType::INVALID_INPUT;
+
+    if(playerId == 86 && cards == 135)
+    {
+        printf("");
+    }
     auto player = this->playersTable.find(playerId);
     if(this->playersTable.find(playerId) == nullptr || player->find()->getData().isEliminated())
     {
@@ -267,7 +280,7 @@ output_t<int> world_cup_t::get_team_points(int teamId)
 output_t<int> world_cup_t::get_ith_pointless_ability(int i)
 {
 
-    if(i == 1)
+    if(i == 78)
     {
         printf("");
     }
@@ -276,7 +289,7 @@ output_t<int> world_cup_t::get_ith_pointless_ability(int i)
         return StatusType::FAILURE;
     }
 
-    int res = teamsStatsTree.select(i)->key_.getTeamId();
+    int res = teamsStatsTree.select(i + 1)->key_.getTeamId();
 	return (res);
 	return StatusType::SUCCESS;
 }
@@ -298,14 +311,19 @@ output_t<permutation_t> world_cup_t::get_partial_spirit(int playerId)
 	return playersTable.find(playerId)->partialSpirit;
 }
 
-StatusType world_cup_t::buy_team(int teamId1, int teamId2)
-{
-	// TODO: Your code goes here
-    if(teamId1 <= 0 || teamId2 <= 0 || teamId1 == teamId2)
-    {
+StatusType world_cup_t::buy_team(int teamId1, int teamId2) {
+    // TODO: Your code goes here
+    if (teamId1 <= 0 || teamId2 <= 0 || teamId1 == teamId2) {
         return StatusType::INVALID_INPUT;
     }
-    if(teamId1 == 2 && teamId2 == 1)
+
+
+    if (teamId1 == 49 && teamId2 == 54)
+    {
+        printf("");
+    }
+
+    if(teamId1 == 6 && teamId2 == 49)
     {
         printf("");
     }
@@ -316,16 +334,17 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
 
     treeNode<TeamById>* firstTeam = this->teamsIdTree.search(teamsIdTree.getRoot(),tId1);
     treeNode<TeamById>* secondTeam = this->teamsIdTree.search(teamsIdTree.getRoot(),tId2);
+    if(firstTeam == nullptr || secondTeam == nullptr)
+    {
+        return StatusType::FAILURE;
+    }
+
     St1.increaseTeamAbility(firstTeam->key_.getTeamAbility());
     St2.increaseTeamAbility(secondTeam->key_.getTeamAbility());
     treeNode<TeamByStats>* firstStats = this->teamsStatsTree.search(teamsStatsTree.getRoot(),St1);
     treeNode<TeamByStats>* secondStats = this->teamsStatsTree.search(teamsStatsTree.getRoot(),St2);
 
 
-    if(firstTeam == nullptr || secondTeam == nullptr)
-    {
-        return StatusType::FAILURE;
-    }
 
     if(secondTeam->key_.getPlayersNum() == 0)
     {
@@ -334,19 +353,16 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
     }
     else if(firstTeam->key_.getPlayersNum() == 0)
     {
-        firstTeam->key_ = secondTeam->key_;
-        firstStats->key_ = secondStats->key_;
-        firstTeam->key_.setId(teamId1);
-        firstStats->key_.setId(teamId1);
-        TeamById tId = firstTeam->key_;
-        TeamByStats tSt = firstStats->key_;
-        this->teamsIdTree.Remove(tId);
-        this->teamsStatsTree.Remove(tSt);
-        tSt.increaseTeamAbility(secondTeam->key_.getTeamAbility());
-        tId.increaseTeamAbility(secondTeam->key_.getTeamAbility());
-        remove_team(teamId2);
+        remove_team(teamId1);
+        TeamById temp = secondTeam->key_;
+        TeamByStats tempSt = secondStats->key_;
+        teamsIdTree.Remove(temp);
+        teamsStatsTree.Remove(tempSt);
+        temp.setId(teamId1);
+        tempSt.setId(teamId1);
+        teamsIdTree.Insert(temp);
+        teamsStatsTree.Insert(tempSt);
 
-        //return StatusType::SUCCESS;
     }
     else
     {
@@ -356,6 +372,7 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
             TeamByStats st = firstStats->key_;
             this->teamsStatsTree.Remove(st);
             st.increaseTeamAbility(secondTeam->key_.getTeamAbility());
+            firstTeam->key_.increaseTeamAbility(secondTeam->key_.getTeamAbility());
             this->teamsStatsTree.Insert(st);
             InvertedTree* firstCaptain = playersTable.find(firstTeam->key_.captain.getPlayerId());
             InvertedTree* secondCaptain = playersTable.find(secondTeam->key_.captain.getPlayerId());
@@ -365,15 +382,25 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
         else
         {
             firstTeam->key_.increaseTeamPoints(secondTeam->key_.getTeamPoints());
+
             TeamByStats st = firstStats->key_;
             this->teamsStatsTree.Remove(st);
             st.increaseTeamAbility(secondTeam->key_.getTeamAbility());
             this->teamsStatsTree.Insert(st);
+
             InvertedTree* firstCaptain = playersTable.find(firstTeam->key_.captain.getPlayerId());
             InvertedTree* secondCaptain = playersTable.find(secondTeam->key_.captain.getPlayerId());
+
             secondCaptain->getData().setGamesPlayedWithTeam(firstTeam->key_.captain.getGamesPlayedWithTeam());
             firstCaptain->Union(secondCaptain);
             firstTeam->key_.captain = secondTeam->key_.captain;
+
+            std::shared_ptr<int> newTeamId = std::make_shared<int>(teamId1);
+
+            firstTeam->key_.captain.setTeamId(newTeamId);
+            firstTeam->key_.increaseTeamAbility(secondTeam->key_.getTeamAbility());
+            playersTable.find(firstTeam->key_.captain.getPlayerId())->getData().setTeamId(newTeamId);
+            secondTeam->key_.captain = firstCaptain->getData();
             remove_team(teamId2);
         }
 

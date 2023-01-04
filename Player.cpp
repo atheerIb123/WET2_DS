@@ -78,3 +78,8 @@ std::shared_ptr<int>& Player::getGamesPlayedWithTeam()
 {
     return this->gamesPlayedWithTeam;
 }
+
+void Player::setTeamId(shared_ptr<int>& newTeamIdPtr)
+{
+    this->teamId = newTeamIdPtr;
+}
