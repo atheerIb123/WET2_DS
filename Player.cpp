@@ -8,7 +8,7 @@ Player::Player()
     this->cards = nullptr;
     this->teamId = nullptr;
     this->ability = 0;
-    this->spirit = permutation_t::invalid();
+    this->spirit = permutation_t::neutral();
 }
 Player::Player(int id)
 {
@@ -31,7 +31,10 @@ Player::Player(int playerId, shared_ptr<int> teamId, const permutation_t& sp, in
     this->cards = cards;
     this->ability = ability;
     this->goalKeeper = goalKeeper;
+    this->eliminated = false;
+    this->spirit = permutation_t::neutral();
 }
+
 
 void Player::setGamesPlayedWithTeam(std::shared_ptr<int> games)
 {
@@ -45,11 +48,6 @@ int Player::getCardsAmount() const
 
 int Player::getGamesPlayed() const
 {
-    if(this->gamesPlayedWithTeam.get() != nullptr)
-    {
-        return this->gamesPlayed + *(this->gamesPlayedWithTeam);
-    }
-
     return this->gamesPlayed;
 }
 
@@ -65,4 +63,18 @@ int Player::getPlayerId() const
 permutation_t& Player::getPermutation()
 {
     return this->spirit;
+}
+
+void Player::eliminatePlayer()
+{
+    this->eliminated = true;
+}
+bool Player::isEliminated() const
+{
+    return this->eliminated;
+}
+
+std::shared_ptr<int>& Player::getGamesPlayedWithTeam()
+{
+    return this->gamesPlayedWithTeam;
 }

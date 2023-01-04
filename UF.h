@@ -11,23 +11,21 @@ private:
 
     void updatePath(InvertedTree *head, InvertedTree *node);
 
-    void updateAcquiredValue(InvertedTree *node);
 
 public:
-    InvertedTree(int key, Player data) : key(key), data(data), size(1), acquired_value(0), next(nullptr) {}
+    permutation_t partialSpirit;
+    permutation_t teamSpirit;
+    InvertedTree(int key, Player data) : key(key), data(data), size(1), next(nullptr) {}
     InvertedTree(const InvertedTree& invertedTree) = default;
     InvertedTree& operator=(const InvertedTree& invertedTree) = default;
     ~InvertedTree() = default;
-
+    void updatePartialSpirit(InvertedTree *node);
     Player& getData() { return data; }
     int getKey() const {return key;}
     long double getAcquiredValue() { return acquired_value; }
     InvertedTree* find();
     void Union(InvertedTree* root);
     void findValue(InvertedTree* node, long double* value);
-    void Union(InvertedTree* group1, InvertedTree* group2, double factor, InvertedTree* owner);
-    void mergeTeamsTrees(Player* rootAcquirer, Player* targetCompany);
-    void mergeTeamsHashies(Player* rootAcquirer, Player* targetCompany);
 };
 
 inline void InvertedTree::updatePath(InvertedTree* head, InvertedTree* node)
@@ -43,17 +41,20 @@ inline void InvertedTree::updatePath(InvertedTree* head, InvertedTree* node)
         node = temp;
     }
 }
-inline void InvertedTree::updateAcquiredValue(InvertedTree* node)
+
+inline void InvertedTree::updatePartialSpirit(InvertedTree* node)
 {
     if (node->next == nullptr) {
         return;
     }
-    updateAcquiredValue(node->next);
-    if (node->next->next == nullptr) {
+    updatePartialSpirit(node->next);
+    if (node->next->next == nullptr)
+    {
         return;
     }
-    else {
-        node->acquired_value += node->next->acquired_value;
+    else
+    {
+        node->partialSpirit = node->next->next->teamSpirit * node->partialSpirit;
     }
 }
 inline InvertedTree* InvertedTree::find()
@@ -63,7 +64,7 @@ inline InvertedTree* InvertedTree::find()
         head = head->next;
     }
 
-    updateAcquiredValue(this);
+    updatePartialSpirit(this);
     updatePath(head, this);
 
     return head;

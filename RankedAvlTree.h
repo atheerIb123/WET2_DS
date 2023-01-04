@@ -19,7 +19,7 @@ private:
     treeNode<T>* root_;
     int nodesNum;
 public:
-    AvlRankTree() : root_(NULL) {}
+    AvlRankTree() : root_(NULL), nodesNum(0){}
 
     // Insert a key into the tree
     void Insert(T key) { root_ = Insert(root_, key); }

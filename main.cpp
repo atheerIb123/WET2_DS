@@ -1,64 +1,147 @@
-#include <iostream>
-/*#include "worldcup23a2.h"
-#include "Player.h"*/
+//
+// 234218 Data Structures 1.
+// Semester: 2023A (winter).
+// Wet Exercise #1.
+//
+// Recommended TAB size to view this file: 8.
+//
+// The following main file is necessary to link and run your code.
+// This file is READ ONLY: even if you submit something else, the compiler ..
+// .. WILL use our file.
+//
+
 #include "worldcup23a2.h"
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+istream& operator>>(istream &in, permutation_t &obj)
+{
+    string str;
+    in >> str;
+    obj = permutation_t::read(str.c_str());
+    return in;
+}
+
+void print(string cmd, StatusType res);
+
+template<typename T>
+void print(string cmd, output_t<T> res);
+
 int main()
 {
+    cin >> std::boolalpha;
 
+    int pid, tid, tid2;
+    int d1, d2, d3;
+    permutation_t p1;
+    bool b1;
 
+    // Init
+    world_cup_t *obj = new world_cup_t();
 
+    // Execute all commands in file
+    string op;
+    while (cin >> op)
+    {
+        if (!op.compare("add_team"))
+        {
+            cin >> tid;
+            print(op, obj->add_team(tid));
+        }
+        else if (!op.compare("remove_team"))
+        {
+            cin >> tid;
+            print(op, obj->remove_team(tid));
+        }
+        else if (!op.compare("add_player"))
+        {
+            cin >> pid >> tid >> p1 >> d1 >> d2 >> d3 >> b1;
+            print(op, obj->add_player(pid, tid, p1, d1, d2, d3, b1));
+        }
+        else if (!op.compare("play_match"))
+        {
+            cin >> tid >> tid2;
+            print(op, obj->play_match(tid, tid2));
+        }
+        else if(!op.compare("num_played_games_for_player"))
+        {
+            cin >> pid;
+            print(op, obj->num_played_games_for_player(pid));
+        }
+        else if(!op.compare("add_player_cards"))
+        {
+            cin >> pid >> d1;
+            print(op, obj->add_player_cards(pid, d1));
+        }
+        else if(!op.compare("get_player_cards"))
+        {
+            cin >> pid;
+            print(op, obj->get_player_cards(pid));
+        }
+        else if(!op.compare("get_team_points"))
+        {
+            cin >> tid;
+            print(op, obj->get_team_points(tid));
+        }
+        else if(!op.compare("get_ith_pointless_ability"))
+        {
+            cin >> d1;
+            print(op, obj->get_ith_pointless_ability(d1));
+        }
+        else if(!op.compare("get_partial_spirit"))
+        {
+            cin >> pid;
+            print(op, obj->get_partial_spirit(pid));
+        }
+        else if(!op.compare("buy_team"))
+        {
+            cin >> tid >> tid2;
+            print(op, obj->buy_team(tid, tid2));
+        }
+        else
+        {
+            cout << "Unknown command: " << op << endl;
+            return -1;
+        }
 
-  /*  HashTable playersTable;
-    permutation_t per;
-    Player tempPlayer(10,std::make_shared<int>(1),per,0,std::make_shared<int>(0),0,false);
-    InvertedTree newNode(10,&tempPlayer);
-    playersTable.insert(newNode);
-    Player tempPlayer2(11,std::make_shared<int>(1),per,0,std::make_shared<int>(0),0,false);
-    InvertedTree newNode2(11,&tempPlayer2);
-    playersTable.insert(newNode2);
-*/
+        // Verify no faults
+        if (cin.fail())
+        {
+            cout << "Invalid input format" << endl;
+            return -1;
+        }
+    }
 
-
-
-
-
-
-    permutation_t per;
-    world_cup_t worldCup;
-    worldCup.add_team(100);
-    worldCup.add_team(200);
-    worldCup.add_team(99);
-    worldCup.add_team(500);
-    worldCup.add_team(98);
-
-    worldCup.add_player(30,99,per,0,100,0,false);
-    worldCup.add_player(60,98,per,0,100,0,false);
-
-    worldCup.add_player(31,500,per,1,0,1,false);
-
-
-    worldCup.add_player(10,100,per,0,3,0,false);
-    worldCup.add_player(11,100,per,1,4,1,false);
-    worldCup.add_player(12,100,per,0,3,0,true);
-
-    worldCup.add_player(20,200,per,0,4,0,false);
-    worldCup.add_player(21,200,per,0,0,0,false);
-    worldCup.add_player(22,200,per,0,10,0,true);
-
-
-    int a = worldCup.get_ith_pointless_ability(0).ans();
-    int b = worldCup.get_ith_pointless_ability(1).ans();
-    int c = worldCup.get_ith_pointless_ability(2).ans();
-    int d = worldCup.get_ith_pointless_ability(-3).ans();
-    int e = worldCup.get_ith_pointless_ability(5).ans();
-
-
-
-
-
-
-
-
-
+    // Quit
+    delete obj;
     return 0;
+}
+
+// Helpers
+static const char *StatusTypeStr[] =
+        {
+                "SUCCESS",
+                "ALLOCATION_ERROR",
+                "INVALID_INPUT",
+                "FAILURE"
+        };
+
+void print(string cmd, StatusType res)
+{
+    cout << cmd << ": " << StatusTypeStr[(int) res] << endl;
+}
+
+template<typename T>
+void print(string cmd, output_t<T> res)
+{
+    if (res.status() == StatusType::SUCCESS)
+    {
+        cout << cmd << ": " << StatusTypeStr[(int) res.status()] << ", " << res.ans() << endl;
+    }
+    else
+    {
+        cout << cmd << ": " << StatusTypeStr[(int) res.status()] << endl;
+    }
 }

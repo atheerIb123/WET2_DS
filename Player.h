@@ -19,7 +19,7 @@ private:
     int ability;
     shared_ptr<int> cards;
     bool goalKeeper;
-
+    bool eliminated;
 public:
     Player();
     Player(int id);
@@ -29,7 +29,10 @@ public:
     ~Player() = default;
 
     void setGamesPlayedWithTeam(std::shared_ptr<int> games);
+    void eliminatePlayer();
+    bool isEliminated() const;
     int getGamesPlayed() const;
+    std::shared_ptr<int>& getGamesPlayedWithTeam();
     void addCards(int amount);
     int getCardsAmount() const;
     int getPlayerId() const;

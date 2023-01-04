@@ -33,6 +33,7 @@ public:
     void addPlayerToCount();
     void decreaseTeamAbility(int value);
     void increaseGamesPlayed(int value);
+    void setId(int id);
     int getGamesPlayed() const;
     int getTeamPoints() const;
     int getTeamAbility() const;

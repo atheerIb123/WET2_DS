@@ -57,5 +57,13 @@ void TeamByStats::decreaseTeamAbility(int value)
 {
     this->allPlayersAbility -= value;
 }
+int TeamByStats::getTeamAbility() const
+{
+    return this->allPlayersAbility;
+}
+void TeamByStats::setId(int id)
+{
+    this->teamId = id;
+}
 
 

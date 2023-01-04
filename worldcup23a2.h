@@ -26,12 +26,11 @@ class world_cup_t {
 private:
 	AvlRankTree<TeamById> teamsIdTree;
     AvlRankTree<TeamByStats> teamsStatsTree;
-
-
+    HashTable playersTable;
 
 
 public:
-    HashTable playersTable;
+
 	world_cup_t();
 	virtual ~world_cup_t();
 	

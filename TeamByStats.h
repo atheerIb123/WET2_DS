@@ -19,6 +19,8 @@ public:
     TeamByStats& operator=(const TeamByStats& other) = default;
     ~TeamByStats() = default;
     int getTeamId() const;
+    int getTeamAbility() const;
+    void setId(int id);
     bool isLegalTeam() const;
     void increaseTeamAbility(int value);
     void decreaseTeamAbility(int value);

@@ -13,6 +13,8 @@ TeamById::TeamById(int teamId)
     teamId_ = teamId;
     hasGK = false;
     this->gamesPlayed = std::make_shared<int>(0);
+    this->teamSpirit = permutation_t::neutral();
+
 }
 void TeamById::increaseTeamAbility(int value)
 {
@@ -28,7 +30,7 @@ int TeamById::getGamesPlayed() const
 }
 void TeamById::increaseGamesPlayed(int value)
 {
-    *this->gamesPlayed += value;
+    *this->gamesPlayed.get() += value;
 };
 
 
@@ -111,4 +113,9 @@ permutation_t TeamById::getTeamSpirit() const
 std::shared_ptr<int> TeamById::getGamesPlayedPointer() const
 {
     return this->gamesPlayed;
+}
+
+void TeamById::setId(int id)
+{
+    this->teamId_ = id;
 }
