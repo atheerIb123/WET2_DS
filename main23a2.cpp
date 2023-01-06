@@ -1,4 +1,37 @@
-// 
+/*#include "worldcup23a2.h"
+
+int main()
+{
+    world_cup_t wc;
+    wc.add_team(100);
+    permutation_t p;
+    wc.add_player(1, 100, permutation_t::neutral(), 20, 3, 4, true);
+    wc.add_player(2, 100, permutation_t::neutral(), 20, 3, 4, true);
+    wc.add_player(3, 100, permutation_t::neutral(), 20, 3, 4, true);
+
+    wc.add_team(200);
+    wc.add_player(4, 200, permutation_t::neutral(), 10, 3, 4, true);
+
+    wc.play_match(100, 200);
+    wc.play_match(100, 200);
+
+    wc.add_player(5, 100, permutation_t::neutral(), 51, 2, 4, false);
+
+    //wc.buy_team(100, 200);
+    wc.remove_team(200);
+    wc.add_team(300);
+    wc.add_player(6, 300, permutation_t::neutral(), 120, 3, 4, true);
+
+    wc.play_match(100, 300);
+    wc.num_played_games_for_player(5);
+    for(int i = 1 ; i <= 6; i++)
+    {
+        std::cout << wc.num_played_games_for_player(i).ans() << std::endl;
+    }
+    return 0;
+}*/
+
+//
 // 234218 Data Structures 1.
 // Semester: 2023A (winter).
 // Wet Exercise #1.

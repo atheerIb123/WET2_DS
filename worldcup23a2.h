@@ -20,7 +20,6 @@
 #include "TeamByStats.h"
 #include "TeamById.h"
 #include "hashTable.h"
-#include "Player.h"
 
 class world_cup_t {
 private:

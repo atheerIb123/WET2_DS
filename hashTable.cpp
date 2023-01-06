@@ -71,12 +71,12 @@ void HashTable::resize(int new_size, LinkedList* old_players_array[], int old_si
             Node* currentNode = old_players_array[i]->getHead();
             while (currentNode)
             {
-                allPlayers->insert(*(currentNode->data));
+                allPlayers->insertWithPtr((currentNode->data));
                 counter++;
                 currentNode->data = nullptr;
                 currentNode = currentNode->next;
             }
-            delete old_players_array[i];
+            //delete old_players_array[i];
         }
     }
 
@@ -98,7 +98,7 @@ void HashTable::resize(int new_size, LinkedList* old_players_array[], int old_si
         {
             new_players_arr[index] = new LinkedList();
         }
-        new_players_arr[index]->insert(*currentPlayer);
+        new_players_arr[index]->insertWithPtr(currentPlayer);
         currentNode = currentNode->next;
     }
     delete allPlayers;

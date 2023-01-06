@@ -31,7 +31,7 @@ int TeamById::getGamesPlayed() const
 void TeamById::increaseGamesPlayed(int value)
 {
     *this->gamesPlayed.get() += value;
-};
+}
 
 
 
@@ -118,4 +118,9 @@ std::shared_ptr<int> TeamById::getGamesPlayedPointer() const
 void TeamById::setId(int id)
 {
     this->teamId_ = id;
+}
+
+void TeamById::setPlayersCount(int n)
+{
+    playersNum = n;
 }

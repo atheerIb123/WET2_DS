@@ -6,11 +6,12 @@
 #define WET2_LINKEDLIST_H
 
 #include <iostream>
-#include "Player.h"
 #include "UF.h"
+
 class Node {
 public:
-    Node(const InvertedTree& employee);
+    Node(const InvertedTree& player);
+    Node(InvertedTree* player);
     Node(const Node& node);
     Node& operator=(const Node& node);
     ~Node();
@@ -30,7 +31,8 @@ public:
     LinkedList& operator=(const LinkedList& linked_list);
     ~LinkedList();
 
-    void insert(const InvertedTree& employee);
+    void insert(const InvertedTree& player);
+    void insertWithPtr(InvertedTree* player);
     void remove(const int id);
     Node* find(const int id);
     Player& getPlayerData(Node* node);
@@ -38,7 +40,6 @@ public:
     Node* getHead() { return head; }
     int getSize() { return size; }
 
-    void updateEmployeesCompanyID(int acquirerID);
 };
 
 

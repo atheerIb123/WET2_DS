@@ -15,7 +15,7 @@ private:
     int teamId_;
     int allPlayersAbility;
     int teamPoints;
-    bool hasGK;
+    bool hasGK = false;
     permutation_t teamSpirit;
     std::shared_ptr<int> gamesPlayed;
 public:
@@ -31,6 +31,7 @@ public:
     void setTeamIsLegal();
     void increaseTeamAbility(int value);
     void addPlayerToCount();
+    void setPlayersCount(int n);
     void decreaseTeamAbility(int value);
     void increaseGamesPlayed(int value);
     void setId(int id);

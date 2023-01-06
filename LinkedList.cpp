@@ -2,6 +2,8 @@
 
 Node::Node(const InvertedTree& player) : data(new InvertedTree(player)), next(nullptr) {}
 
+Node::Node(InvertedTree* player) : data(player), next(nullptr){}
+
 Node::Node(const Node& node)
 {
     data = new InvertedTree(*(node.data));
@@ -136,7 +138,8 @@ Player& LinkedList::getPlayerData(Node* node)
     if (node) {
         return node->data->getData();
     }
-    //return nullptr;
+
+    return node->data->getData();
 }
 
 void LinkedList::setHead(Node* newHead)
@@ -146,11 +149,18 @@ void LinkedList::setHead(Node* newHead)
     }
 }
 
-void LinkedList::updateEmployeesCompanyID(int acquirerID)
+void LinkedList::insertWithPtr(InvertedTree* player)
 {
-    /*Node* currentNode = head;
-    while (currentNode) {
-        currentNode->data->setEmployerID(acquirerID);
-        currentNode = currentNode->next;
-    }*/
+    Node* node_to_add = new Node(player);
+    if (head == nullptr) {
+        head = node_to_add;
+    }
+    else {
+        Node* currentNode = head;
+        while (currentNode->next) {
+            currentNode = currentNode->next;
+        }
+        currentNode->next = node_to_add;
+    }
+    size++;
 }

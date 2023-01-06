@@ -6,8 +6,7 @@
 #define WET2_HASHTABLE_H
 
 #include <iostream>
-#include "Player.h"
-#include "linkedList.h"
+#include "LinkedList.h"
 
 typedef enum {
     HASH_TABLE_SUCCESS = 0,

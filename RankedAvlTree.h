@@ -4,12 +4,11 @@
 template <class T>
 class treeNode{
 public:
-    treeNode(T key) : key_(key), left_(NULL), right_(NULL), height_(1), size_(1) {}
     T key_;
     treeNode* left_;
     treeNode* right_;
-    int height_;
     int size_;
+    treeNode(T key) : key_(key), left_(NULL), right_(NULL),size_(1) {}
 };
 
 // AVL tree class
@@ -66,7 +65,7 @@ public:
 private:
     // Recursive function to insert a key into the tree
     treeNode<T>* Insert(treeNode<T>* node, T key) {
-        if (node == NULL) return new treeNode(key);
+        if (node == NULL) return new treeNode<T>(key);
 
         if (key < node->key_) {
             node->left_ = Insert(node->left_, key);
@@ -78,7 +77,6 @@ private:
         }
 
         // Update the height and size of the node
-        node->height_ = std::max(GetHeight(node->left_), GetHeight(node->right_)) + 1;
         node->size_ = GetSize(node->left_) + GetSize(node->right_) + 1;
         // Balance the tree
         int balance = GetBalance(node);
@@ -142,11 +140,8 @@ private:
         {
             return select(v->right_, k - Vleft - 1);
         }
-    }
-    // Get the height of a node
-    int GetHeight(treeNode<T>* node) {
-        if (node == NULL) return 0;
-        return node->height_;
+
+        return nullptr;
     }
 
     // Get the size (i.e., number of nodes) of a subtree
@@ -167,15 +162,17 @@ private:
         if (root)
         {
             if(root->left_)
-                Hleft = root->left_->height_;
+                Hleft = GetHeight(root->left_);
             else
                 Hleft = 0;
             if(root->right_)
-                Hright = root->right_->height_;
+                Hright = GetHeight(root->right_);
             else
                 Hright = 0;
             return (Hleft - Hright);
         }
+
+        return 0;
     }
 
 
@@ -250,35 +247,50 @@ private:
     treeNode<T>* RotateRight(treeNode<T>* node)
     {
         treeNode<T>* left = node->left_;
-        treeNode<T>* right = left->right_;
+        treeNode<T>* right = nullptr;
+        if(left != nullptr) {
+            right = left->right_;
 
-        left->right_ = node;
-        node->left_ = right;
+            left->right_ = node;
+            node->left_ = right;
 
-        // Update the height and size of the nodes
-        node->height_ = std::max(GetHeight(node->left_), GetHeight(node->right_)) + 1;
-        node->size_ = GetSize(node->left_) + GetSize(node->right_) + 1;
-        left->height_ = std::max(GetHeight(left->left_), GetHeight(left->right_)) + 1;
-        left->size_ = GetSize(left->left_) + GetSize(left->right_) + 1;
-
+            // Update the height and size of the nodes
+            node->size_ = GetSize(node->left_) + GetSize(node->right_) + 1;
+            left->size_ = GetSize(left->left_) + GetSize(left->right_) + 1;
+        }
         return left;
     }
 
     // Rotate a subtree to the left
     treeNode<T>* RotateLeft(treeNode<T>* node) {
-        treeNode<T>* right = node->right_;
-        treeNode<T>* left = right->left_;
+        treeNode<T> *right = node->right_;
+        treeNode<T>* left = nullptr;
 
-        right->left_ = node;
-        node->right_ = left;
+        if (right != nullptr)
+        {
+            left = right->left_;
 
-        // Update the height and size of the nodes
-        node->height_ = std::max(GetHeight(node->left_), GetHeight(node->right_)) + 1;
-        node->size_ = GetSize(node->left_) + GetSize(node->right_) + 1;
-        right->height_ = std::max(GetHeight(right->left_), GetHeight(right->right_)) + 1;
-        right->size_ = GetSize(right->left_) + GetSize(right->right_) + 1;
+            right->left_ = node;
+            node->right_ = left;
+
+            // Update the height and size of the nodes
+            node->size_ = GetSize(node->left_) + GetSize(node->right_) + 1;
+            right->size_ = GetSize(right->left_) + GetSize(right->right_) + 1;
+        }
 
         return right;
+    }
+// Get the height of a node
+    int GetHeight(treeNode<T>* node) {
+
+        if (node == NULL) return 0;
+        int leftH = GetHeight(node->left_);
+        int rightH = GetHeight(node->right_);
+        int max = leftH;
+        if(rightH > leftH)
+            max = rightH;
+
+        return max + 1;
     }
 
 };
