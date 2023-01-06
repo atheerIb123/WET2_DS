@@ -1,4 +1,5 @@
-/*#include "worldcup23a2.h"
+/*
+#include "worldcup23a2.h"
 
 int main()
 {
@@ -29,7 +30,9 @@ int main()
         std::cout << wc.num_played_games_for_player(i).ans() << std::endl;
     }
     return 0;
-}*/
+}
+*/
+
 
 //
 // 234218 Data Structures 1.

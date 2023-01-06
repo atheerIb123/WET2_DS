@@ -88,6 +88,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
 
     TeamById tempId(teamId);
     treeNode<TeamById>* team = teamsIdTree.search(teamsIdTree.getRoot(),tempId);
+
     if(team == nullptr || (this->playersTable.find(playerId) != nullptr && this->playersTable.find(playerId)->getData().getPlayerId() == playerId))
         return StatusType::FAILURE;
 
@@ -122,8 +123,9 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
         playersTable.find(playerId)->Union(playersTable.find(team->key_.captain.getPlayerId()));
         playersTable.find(playerId)->partialSpirit = team->key_.getTeamSpirit();
     }
+
     playersTable.find(team->key_.captain.getPlayerId())->teamSpirit = team->key_.getTeamSpirit();
-    //playersTable.find(team->key_.captain.getPlayerId())->setSpiritRemainder(team->key_.getTeamSpirit());
+
     return StatusType::SUCCESS;
 }
 
@@ -213,7 +215,6 @@ output_t<int> world_cup_t::num_played_games_for_player(int playerId)
     InvertedTree* playerNode = this->playersTable.find(playerId);
 
     return playerNode->findValue();
-    //return this->playersTable.find(playerId)->getData().getGamesPlayed() + *this->playersTable.find(playerId)->find()->getData().getGamesPlayedWithTeam();//the captain gamesPlayed with team
 }
 
 StatusType world_cup_t::add_player_cards(int playerId, int cards)
@@ -228,8 +229,10 @@ StatusType world_cup_t::add_player_cards(int playerId, int cards)
     {
         return StatusType::FAILURE;
     }
+
     player->getData().addCards(cards);
-	return StatusType::SUCCESS;
+
+    return StatusType::SUCCESS;
 }
 
 output_t<int> world_cup_t::get_player_cards(int playerId)
@@ -243,8 +246,8 @@ output_t<int> world_cup_t::get_player_cards(int playerId)
     {
         return StatusType::FAILURE;
     }
+
     return playersTable.find(playerId)->getData().getCardsAmount();
-	return StatusType::SUCCESS;
 }
 
 output_t<int> world_cup_t::get_team_points(int teamId)
@@ -260,7 +263,6 @@ output_t<int> world_cup_t::get_team_points(int teamId)
         return  StatusType::FAILURE;
 
     return team->key_.getTeamPoints();
-	return StatusType::SUCCESS;
 }
 
 output_t<int> world_cup_t::get_ith_pointless_ability(int i)
@@ -274,7 +276,6 @@ output_t<int> world_cup_t::get_ith_pointless_ability(int i)
 
     int res = teamsStatsTree.select(i + 1)->key_.getTeamId();
 	return (res);
-	return StatusType::SUCCESS;
 }
 
 output_t<permutation_t> world_cup_t::get_partial_spirit(int playerId)
@@ -291,10 +292,6 @@ output_t<permutation_t> world_cup_t::get_partial_spirit(int playerId)
         return StatusType::FAILURE;
     }
 
-    if(playerId == 55)
-    {
-        printf("");
-    }
     return playersTable.find(playerId)->findPartialSpirit();
 }
 
@@ -317,8 +314,7 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2) {
     {
         return StatusType::FAILURE;
     }
-
-
+  
     St1.increaseTeamAbility(firstTeam->key_.getTeamAbility());
     St2.increaseTeamAbility(secondTeam->key_.getTeamAbility());
     treeNode<TeamByStats>* firstStats = this->teamsStatsTree.search(teamsStatsTree.getRoot(),St1);
@@ -395,8 +391,7 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2) {
         }
         firstTeam->key_.mulPer(secondTeam->key_.getTeamSpirit());
         remove_team(teamId2);
-
-        //return StatusType::SUCCESS;
     }
+
     return StatusType::SUCCESS;
 }

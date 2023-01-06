@@ -61,7 +61,7 @@ inline void InvertedTree::updatePartialSpirit(InvertedTree* node)
         return;
     }
     else {
-        node->spiritRemainder = node->spiritRemainder * node->next->spiritRemainder;
+        node->spiritRemainder = node->next->spiritRemainder * node->spiritRemainder;
     }
 }
 
