@@ -9,6 +9,7 @@ public:
     treeNode* right_;
     int size_;
     treeNode(T key) : key_(key), left_(NULL), right_(NULL),size_(1) {}
+    ~treeNode() = default;
 };
 
 // AVL tree class
@@ -20,6 +21,23 @@ private:
 public:
     AvlRankTree() : root_(NULL), nodesNum(0){}
 
+    ~AvlRankTree()
+    {
+        deleteTree(this->root_);
+    }
+
+    void deleteTree(treeNode<T>* root)
+    {
+        if(root == nullptr)
+        {
+            return;
+        }
+
+        deleteTree(root->left_);
+        deleteTree(root->right_);
+
+        delete root;
+    }
     // Insert a key into the tree
     void Insert(T key) { root_ = Insert(root_, key); }
 
