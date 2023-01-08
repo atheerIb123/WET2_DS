@@ -1,7 +1,3 @@
-//
-// Created by USER on 12/26/2022.
-//
-
 #ifndef WET2_HASHTABLE_H
 #define WET2_HASHTABLE_H
 
@@ -19,7 +15,7 @@ class HashTable {
 private:
     int size;
     int counter;
-    LinkedList** players; //pointer to array of LinkedList, the value of every index of the array is a linked list of players
+    LinkedList* players;
     static const int init_size = 8;
 
 public:
@@ -28,7 +24,7 @@ public:
     HashTable& operator=(const HashTable& node) = default;
     ~HashTable();
 
-    void resize(int new_size, LinkedList* old_players_array[], int old_size);
+    void resize(int new_size, LinkedList* old_players_array, int old_size);
     int HashFunction(int playerId);
     InvertedTree* find(int playerId);
 
@@ -36,8 +32,6 @@ public:
     HashTableStatus remove(InvertedTree& player);
     int getCounter() { return counter; }
     int getSize() { return size; }
-    //void updatePlayerCompanyID(int acquirerID);
-    //void mergeTwoHashies(HashTable* acquirer, HashTable* target);
     void deletePlayers();
 };
 
